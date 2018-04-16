@@ -1,0 +1,89 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="include/includebase"></head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+    <table id="scoreDetail-table" style="margin-top: -50px;">
+    </table>
+</div>
+<script th:inline="javascript">
+    $(function () {
+        initTable();
+    });
+    function doQuery() {
+        $('#scoreDetail-table').bootstrapTable('refresh');    //刷新表格
+    }
+    function initTable() {
+        $('#scoreDetail-table').bootstrapTable({
+            url: "/scoreDetail/list?userId=[[${entity.id}]]",
+            height: $(window.parent.document).find("#wrapper").height() - 252,
+            width: $(window).width(),
+            showColumns: true,
+            formId: "queryscoreDetail",
+            pagination: true,
+            sortName: 'id',
+            sortOrder: 'desc',
+            clickToSelect: true,// 单击某一行的时候选中某一条记录
+            pageSize: 13,
+            toolbars: [
+            ],
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    field: '',
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index + 1;
+                    }
+                },
+
+                {
+                    field: 'orderNo',
+                    title: '订单编号',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'userName',
+                    title: '用户姓名',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'score',
+                    title: '消耗积分',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'type',
+                    title: '积分类型',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return getCodeDictText("SCORE_TYPE", value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        var dt = new Date(value).format('yyyy-MM-dd hh:mm:ss');
+                        return dt;
+                    }
+                }
+            ]
+        });
+    }
+</script>
+</body>
+</html>

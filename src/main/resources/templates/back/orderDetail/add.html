@@ -1,0 +1,158 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<form id="orderDetailForm"  role="form" method="post" action="orderDetail/save">
+	<div class="form-group" >
+		<label for="dinnerId">菜单ID:</label>
+		<input type="text" class="form-control" name="dinnerId" id="dinnerId"  placeholder="请输入菜单ID" />
+	</div>
+	<div class="form-group" >
+		<label for="orderId">订单ID:</label>
+		<input type="text" class="form-control" name="orderId" id="orderId"  placeholder="请输入订单ID" />
+	</div>
+	<div class="form-group" >
+		<label for="price">单价:</label>
+		<input type="text" class="form-control" name="price" id="price"  placeholder="请输入单价" />
+	</div>
+	<div class="form-group" >
+		<label for="num">数量:</label>
+		<input type="text" class="form-control" name="num" id="num"  placeholder="请输入数量" />
+	</div>
+	<div class="form-group" >
+		<label for="imageUrl">图片地址:</label>
+		<input type="text" class="form-control" name="imageUrl" id="imageUrl"  placeholder="请输入图片地址" />
+	</div>
+	<div class="form-group" >
+		<label for="goodTypeName">菜品类型名字:</label>
+		<input type="text" class="form-control" name="goodTypeName" id="goodTypeName"  placeholder="请输入菜品类型名字" />
+	</div>
+	<div class="form-group" >
+		<label for="name">菜名:</label>
+		<input type="text" class="form-control" name="name" id="name"  placeholder="请输入菜名" />
+	</div>
+	<div class="form-group" >
+		<label for="preferentialPrice">优惠价格:</label>
+		<input type="text" class="form-control" name="preferentialPrice" id="preferentialPrice"  placeholder="请输入优惠价格" />
+	</div>
+	<div class="form-group" >
+		<label for="isPreferential">是否优惠（1：是；2：否）:</label>
+		<input type="text" class="form-control" name="isPreferential" id="isPreferential"  placeholder="请输入是否优惠（1：是；2：否）" />
+	</div>
+	<div class="form-group" >
+		<label for="orderTime">下单时间:</label>
+		<input type="text" class="form-control" name="orderTime" id="orderTime"  placeholder="请输入下单时间" />
+	</div>
+</form>
+<script th:inline="javascript">
+	<![CDATA[
+	$(function () {
+		$('#orderDetailForm').bootstrapValidator({
+			message: 'This value is not valid',
+			feedbackIcons: {
+				valid: 'glyphicon glyphicon-ok',
+				invalid: 'glyphicon glyphicon-remove',
+				validating: 'glyphicon glyphicon-refresh'
+			},
+			fields: {
+				dinnerId:{
+					message: '菜单ID验证失败',
+					validators: {
+					notEmpty: {
+						message: '菜单ID不能为空'
+					}
+				}
+			},
+				orderId:{
+					message: '订单ID验证失败',
+					validators: {
+					notEmpty: {
+						message: '订单ID不能为空'
+					}
+				}
+			},
+				price:{
+					message: '单价验证失败',
+					validators: {
+					notEmpty: {
+						message: '单价不能为空'
+					}
+				}
+			},
+				num:{
+					message: '数量验证失败',
+					validators: {
+					notEmpty: {
+						message: '数量不能为空'
+					}
+				}
+			},
+				imageUrl:{
+					message: '图片地址验证失败',
+					validators: {
+					notEmpty: {
+						message: '图片地址不能为空'
+					}
+				}
+			},
+				goodTypeName:{
+					message: '菜品类型名字验证失败',
+					validators: {
+					notEmpty: {
+						message: '菜品类型名字不能为空'
+					}
+				}
+			},
+				name:{
+					message: '菜名验证失败',
+					validators: {
+					notEmpty: {
+						message: '菜名不能为空'
+					}
+				}
+			},
+				preferentialPrice:{
+					message: '优惠价格验证失败',
+					validators: {
+					notEmpty: {
+						message: '优惠价格不能为空'
+					}
+				}
+			},
+				isPreferential:{
+					message: '是否优惠（1：是；2：否）验证失败',
+					validators: {
+					notEmpty: {
+						message: '是否优惠（1：是；2：否）不能为空'
+					}
+				}
+			},
+				orderTime:{
+					message: '下单时间验证失败',
+					validators: {
+					notEmpty: {
+						message: '下单时间不能为空'
+					}
+				}
+			},
+			}
+		})
+		$("#btnOk",window.top.document).click(function() {
+			var bootstrapValidator = $("#orderDetailForm", window.top.document).data('bootstrapValidator');
+			bootstrapValidator.validate();
+			if(bootstrapValidator.isValid()){
+				$.post($("#orderDetailForm",window.top.document).attr('action'),$("#orderDetailForm",window.top.document).serialize(),function(e){
+					if(e.result){
+						$('.modal-dialog', window.top.document).parent('div').remove()
+						$('body', window.top.document).find('.modal-backdrop').remove();
+						$(window.parent.document).contents().find(".tab-pane.fade.active.in iframe")[0].contentWindow.doQuery();
+						window.Ewin.alert({message:'增加数据成功!'});
+					}else{
+						window.Ewin.alert({message:'增加数据失败!'});
+					}
+				 })
+			}
+		 });
+	})
+	]]>
+</script>
+</body>
+</html>

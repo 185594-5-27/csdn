@@ -2,10 +2,13 @@ package com.mongo.sys.entity;
 
 
 import com.mongo.common.base.entity.QueryField;
+import net.sf.json.JSONObject;
 import org.bson.types.ObjectId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +21,24 @@ import java.util.List;
 * @create 2018/3/30 0030 
 */
 public class User implements UserDetails {
+
+    public static void main(String [] args){
+        User user = new User();
+        List<UserRole> roles = new ArrayList<UserRole>();
+        UserRole userRole = new UserRole();
+        userRole.setId("5ac0e051c053f4297804f42c");
+        userRole.setName("ROLE_ADMIN");
+        userRole.setRoleName("系统管理员");
+        roles.add(userRole);
+        user.setLogin("shyll");
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        user.setPassword(passwordEncoder.encode("123456"));
+        user.setRoles(roles);
+        user.setId(ObjectId.get().toString());
+        user.setState("1");
+        System.out.println(JSONObject.fromObject(user).toString());
+
+    }
 
 
     private ObjectId id;

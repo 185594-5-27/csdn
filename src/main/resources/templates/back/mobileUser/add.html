@@ -1,0 +1,123 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<form id="mobileUserForm" role="form" method="post" action="mobileUser/save">
+    <div class="form-group">
+        <label for="phone">电话:</label>
+        <input type="text" class="form-control" name="phone" id="phone" placeholder="请输入电话"/>
+    </div>
+    <div class="form-group">
+        <label for="name">名字:</label>
+        <input type="text" class="form-control" name="name" id="name" placeholder="请输入名字"/>
+    </div>
+    <div class="form-group">
+        <label for="pass">密码:</label>
+        <input type="text" class="form-control" name="pass" id="pass" placeholder="请输入密码"/>
+    </div>
+    <div class="form-group">
+        <label for="sex">性别:</label>
+        <input type="text" class="form-control" name="sex" id="sex" placeholder="请输入性别"/>
+    </div>
+    <div class="form-group">
+        <label for="age">年龄:</label>
+        <input type="text" class="form-control" name="age" id="age" placeholder="请输入年龄"/>
+    </div>
+</form>
+<script th:inline="javascript">
+    <![CDATA[
+    $(function () {
+        $('#mobileUserForm').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                name: {
+                    message: '名字验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '名字不能为空'
+                        }
+                    }
+                },
+                phone: {
+                    message: '手机验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '手机不能为空'
+                        },
+                        stringLength: {
+                            min: 11,
+                            max: 11,
+                            message: '手机长度必须在11到11之间'
+                        },
+                        threshold :  11 , //有6字符以上才发送ajax请求，（input中输入一个字符，插件会向服务器发送一次，设置限制，6字符以上才开始）
+                        remote: {//ajax验证。server result:{"valid",true or false} 向服务发送当前input name值，获得一个json数据。例表示正确：{"valid",true}
+                            url: "mobileUser/isExist",//验证地址
+                            data:function(validator) {// 获取需要传送到后台的验证的数据
+                                return {
+                                    phone:$('#phone').val()
+                                }
+                            },
+                            message: '手机已存在',//提示消息
+                            delay :  500,//每输入一个字符，就发ajax请求，服务器压力还是太大，设置2秒发送一次ajax（默认输入一个字符，提交一次，服务器压力太大）
+                            type: 'POST'//请求方式
+                        }
+                    }
+                },
+                pass: {
+                    message: '密码验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        }
+                    }
+                },
+                sex: {
+                    message: '性别验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '性别不能为空'
+                        }
+                    }
+                },
+                age: {
+                    message: '年龄验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '年龄不能为空'
+                        }
+                    }
+                }
+            }
+        })
+        $("#btnOk", window.top.document).click(function () {
+            // 此段是为防止需要点击两次按钮来实现验证的方法，若不添加此处的放行，那么我们将要点击两次确定按钮才可以提交验证
+            var phone = $("#phone").val();
+            // 判断当前的code又值，且当前不存在错误验证方可放开该字段的验证
+            if(phone != null && phone != ""&&$("#phone").parent("div").find('.glyphicon-remove').length==0){
+                $('#mobileUserForm').bootstrapValidator('enableFieldValidators', 'phone', false);
+            } else {
+                $('#mobileUserForm').bootstrapValidator('enableFieldValidators', 'phone', true);
+            }
+            var bootstrapValidator = $("#mobileUserForm", window.top.document).data('bootstrapValidator');
+            bootstrapValidator.validate();
+            if (bootstrapValidator.isValid()) {
+                $.post($("#mobileUserForm", window.top.document).attr('action'), $("#mobileUserForm", window.top.document).serialize(), function (e) {
+                    if (e.result) {
+                        $('.modal-dialog', window.top.document).parent('div').remove()
+                        $('body', window.top.document).find('.modal-backdrop').remove();
+                        $(window.parent.document).contents().find(".tab-pane.fade.active.in iframe")[0].contentWindow.doQuery();
+                        window.Ewin.alert({message: '增加数据成功!'});
+                    } else {
+                        window.Ewin.alert({message: '增加数据失败!'});
+                    }
+                })
+            }
+        });
+    })
+    ]]>
+</script>
+</body>
+</html>

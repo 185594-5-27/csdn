@@ -1,0 +1,257 @@
+<html xmlns:th="http://www.thymeleaf.org"
+ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"> 
+<head th:include="include/includebase"></head> 
+<body> 
+<div class="panel-body" style="padding-bottom:0px;"> 
+	<div class="panel panel-default">
+		<div class="panel-heading">查询条件</div>
+		<div class="panel-body">
+			<form class="form-inline" role="form" style="float: left; width: 100%;" method="post" id="queryorder">
+				<div class="form-group">
+					<label for="orderNum">订单编号:</label>
+					<input type="text" class="form-control" name="orderNum" id="orderNum"  placeholder="请输入订单编号" />
+				</div>
+				<div class="form-group">
+					<label for="privateRoom">包间名字:</label>
+					<input type="text" class="form-control" name="privateRoom" id="privateRoom"  placeholder="请输入包间名字" />
+				</div>
+				<div class="form-group">
+					<label for="state">订单状态:</label>
+					<select class="form-control" name="state" id="state" >
+                          <option value="">请选择订单状态</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="orderUser">下单人:</label>
+					<input type="text" class="form-control" name="orderUser" id="orderUser"  placeholder="请输入下单人" />
+				</div>
+				<div class="form-group">
+					<label for="consumeUser">消费人:</label>
+					<input type="text" class="form-control" name="consumeUser" id="consumeUser"  placeholder="请输入消费人" />
+				</div>
+				<div class="form-group">
+					<button type="button" id="queryBtn" onclick="doQuery();" class="btn btn-primary">查询</button>
+				</div>
+			</form>
+		</div>
+		</div>
+	</div>
+	<table id="order-table" style="margin-top: -50px;">
+	</table>
+</div>
+<script th:inline="javascript">
+	$(function() {
+		initTable();
+        getSelectOption("ORDER_STATE","state");
+	});
+	function doQuery(){
+ 		$('#order-table').bootstrapTable('refresh');    //刷新表格
+	}
+	// 消费明细
+	function orderDetail(id){
+        window.Ewin.dialogShow({title:"消费明细",url:"orderDetail/toOrderDetail?id="+id,width:900,height:800})
+	}
+	// 明细操作
+	function orderDetailController(id){
+        window.Ewin.dialogShow({title:"明细操作",url:"orderDetail/toOrderDetailList?id="+id,width:950,height:600})
+	}
+
+	function initTable(){
+		$('#order-table').bootstrapTable({
+			url:"order/list",
+			height: $(window.parent.document).find("#wrapper").height() - 252,
+			width:$(window).width(),
+			showColumns:true,
+			formId :"queryorder",
+			pagination : true,
+			sortName : 'id',
+			sortOrder : 'desc',
+			clickToSelect: true,// 单击某一行的时候选中某一条记录
+			pageSize : 13,
+			toolbars:[
+				{
+					text: '结账',
+					iconCls: 'fa fa-credit-card',
+					handler: function () {
+                        var rows = $('#order-table').bootstrapTable('getSelections');
+                        if(rows.length==0){
+                            window.Ewin.alert({message:'请选择一条需要结账的数据!'});
+                            return false;
+                        }
+                        if(rows[0].state!='1'){
+                            window.Ewin.alert({message:'请选择待付款的订单进行结账!'});
+                            return false;
+						}
+                        window.Ewin.confirm({title:'提示',message:'是否要对桌号（'+rows[0].tableNum+'），订单编号（'+rows[0].orderNum+'），消费金额为（'+rows[0].orderPrice+'）的订单进行结账？',width:500}).on(function (e) {
+                            if (e) {
+                                window.Ewin.dialog({title:"结账",url:"order/toCheckout?id="+rows[0].id,width:400,height:600})
+                            }
+                        });
+				}
+				},
+				{
+					text: '订单取消',
+					iconCls: 'fa fa-window-close-o',
+					handler: function () {
+						var rows = $('#order-table').bootstrapTable('getSelections');
+						if(rows.length==0){
+							window.Ewin.alert({message:'请选择一条需要取消订单的数据!'});
+							return false;
+						}
+                        if(rows[0].state!='1'){
+                            window.Ewin.alert({message:'请选择待付款的订单进行取消!'});
+                            return false;
+                        }
+						window.Ewin.confirm({title:'提示',message:'是否要取消您所选择的订单记录？',width:500}).on(function (e) {
+						if (e) {
+							$.post("order/cancelOrder",{id:rows[0].id},function(e){
+								if(e.result){
+									window.Ewin.alert({message:e.msg});
+									doQuery();
+								}
+							});
+							}
+						});
+					}
+				},
+                {
+                    text: '打印订单',
+                    iconCls: 'fa fa-print',
+                    handler: function () {
+                        var rows = $('#order-table').bootstrapTable('getSelections');
+                        if(rows.length==0){
+                            window.Ewin.alert({message:'请选择一条需要打印的订单的数据!'});
+                            return false;
+                        }
+                        window.open("/order/toOrderDetailPrintByOrder?id="+rows[0].id);
+                    }
+                }
+			],
+			columns: [
+				{
+					checkbox: true
+				},
+				{
+					field: '',
+					title: '序号',
+					formatter: function (value, row, index) {
+						return index+1;
+					}
+				},
+				{
+					field : 'orderNum',
+					title : '订单编号',
+					align : 'center',
+					valign : 'middle',
+					sortable : true
+				},
+				{
+					field : 'orderPrice',
+					title : '订单价格',
+					align : 'center',
+					valign : 'middle',
+					sortable : true
+				},
+				{
+					field : 'realIncome',
+					title : '实际收入',
+					align : 'center',
+					valign : 'middle',
+					sortable : true
+				},
+				{
+					field : 'tableNum',
+					title : '桌号',
+					align : 'center',
+					valign : 'middle',
+					sortable : true
+				},
+				{
+					field : 'privateRoom',
+					title : '包间名字',
+					align : 'center',
+					valign : 'middle',
+					sortable : true
+				},
+				{
+					field : 'orderTime',
+					title : '下单时间',
+					align : 'center',
+					valign : 'middle',
+					sortable : true,
+                    formatter: function (value, row, index) {
+                        var dt = new Date(value).format('yyyy-MM-dd hh:mm:ss');
+                        return dt;
+                    }
+				},
+				{
+					field : 'state',
+					title : '订单状态',
+					align : 'center',
+					valign : 'middle',
+					sortable : true,
+                    formatter: function (value, row, index) {
+                        return getCodeDictText("ORDER_STATE",value);
+                    }
+				},
+				{
+					field : 'orderUser',
+					title : '下单人',
+					align : 'center',
+					valign : 'middle',
+					sortable : true
+				},
+				{
+					field : 'consumeUser',
+					title : '消费人',
+					align : 'center',
+					valign : 'middle',
+					sortable : true
+				},
+				{
+                    field : 'consumeUserPhone',
+                    title : '消费人手机号',
+                    align : 'center',
+                    valign : 'middle',
+                    sortable : true
+                },
+				{
+					field : 'consumeTime',
+					title : '消费/取消时间',
+					align : 'center',
+					valign : 'middle',
+					sortable : true,
+                    formatter: function (value, row, index) {
+					    if(row.state=='1'){
+					        return "";
+						}else{
+                            var dt = new Date(value).format('yyyy-MM-dd hh:mm:ss');
+                            return dt;
+						}
+                    }
+				},
+				{
+					field : 'score',
+					title : '产生积分',
+					align : 'center',
+					valign : 'middle',
+					sortable : true
+				},{
+                    field : 'operations',
+                    title : '操作',
+                    align : 'center',
+                    valign : 'middle',
+                    formatter: function (value, row, index) {
+                        if(row.state=='1'){
+                            return '<a href="#" onclick="orderDetail('+row.id+')" >消费明细</a>&nbsp;|&nbsp;<a href="#" onclick="orderDetailController('+row.id+')">明细操作</a>';
+						}else{
+                            return '<a href="#" onclick="orderDetail('+row.id+')">消费明细</a>';
+						}
+                    }
+                }
+			]
+			});
+		}
+	</script>
+</body>
+</html>

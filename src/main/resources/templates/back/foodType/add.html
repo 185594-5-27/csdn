@@ -1,0 +1,50 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<form id="foodTypeForm"  role="form" method="post" action="foodType/save">
+	<div class="form-group" >
+		<label for="type">菜品类型:</label>
+		<input type="text" class="form-control" name="type" id="type"  placeholder="请输入菜品类型" />
+	</div>
+</form>
+<script th:inline="javascript">
+	<![CDATA[
+	$(function () {
+		$('#foodTypeForm').bootstrapValidator({
+			message: 'This value is not valid',
+			feedbackIcons: {
+				valid: 'glyphicon glyphicon-ok',
+				invalid: 'glyphicon glyphicon-remove',
+				validating: 'glyphicon glyphicon-refresh'
+			},
+			fields: {
+				type:{
+					message: '菜品类型验证失败',
+					validators: {
+					notEmpty: {
+						message: '菜品类型不能为空'
+					}
+				}
+			},
+			}
+		})
+		$("#btnOk",window.top.document).click(function() {
+			var bootstrapValidator = $("#foodTypeForm", window.top.document).data('bootstrapValidator');
+			bootstrapValidator.validate();
+			if(bootstrapValidator.isValid()){
+				$.post($("#foodTypeForm",window.top.document).attr('action'),$("#foodTypeForm",window.top.document).serialize(),function(e){
+					if(e.result){
+						$('.modal-dialog', window.top.document).parent('div').remove()
+						$('body', window.top.document).find('.modal-backdrop').remove();
+						$(window.parent.document).contents().find(".tab-pane.fade.active.in iframe")[0].contentWindow.doQuery();
+						window.Ewin.alert({message:'增加数据成功!'});
+					}else{
+						window.Ewin.alert({message:'增加数据失败!'});
+					}
+				 })
+			}
+		 });
+	})
+	]]>
+</script>
+</body>
+</html>

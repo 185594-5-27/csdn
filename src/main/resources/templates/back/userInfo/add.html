@@ -1,0 +1,62 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<form id="userInfoForm"  role="form" method="post" action="userInfo/save">
+	<div class="form-group" >
+		<label for="name">name:</label>
+		<input type="text" class="form-control" name="name" id="name"  placeholder="请输入name" />
+	</div>
+	<div class="form-group" >
+		<label for="age">age:</label>
+		<input type="text" class="form-control" name="age" id="age"  placeholder="请输入age" />
+	</div>
+</form>
+<script th:inline="javascript">
+	<![CDATA[
+	$(function () {
+		$('#userInfoForm').bootstrapValidator({
+			message: 'This value is not valid',
+			feedbackIcons: {
+				valid: 'glyphicon glyphicon-ok',
+				invalid: 'glyphicon glyphicon-remove',
+				validating: 'glyphicon glyphicon-refresh'
+			},
+			fields: {
+				name:{
+					message: 'name验证失败',
+					validators: {
+					notEmpty: {
+						message: 'name不能为空'
+					}
+				}
+			},
+				age:{
+					message: 'age验证失败',
+					validators: {
+					notEmpty: {
+						message: 'age不能为空'
+					}
+				}
+			},
+			}
+		})
+		$("#btnOk",window.top.document).click(function() {
+			var bootstrapValidator = $("#userInfoForm", window.top.document).data('bootstrapValidator');
+			bootstrapValidator.validate();
+			if(bootstrapValidator.isValid()){
+				$.post($("#userInfoForm",window.top.document).attr('action'),$("#userInfoForm",window.top.document).serialize(),function(e){
+					if(e.result){
+						$('.modal-dialog', window.top.document).parent('div').remove()
+						$('body', window.top.document).find('.modal-backdrop').remove();
+						$(window.parent.document).contents().find(".tab-pane.fade.active.in iframe")[0].contentWindow.doQuery();
+						window.Ewin.alert({message:'增加数据成功!'});
+					}else{
+						window.Ewin.alert({message:'增加数据失败!'});
+					}
+				 })
+			}
+		 });
+	})
+	]]>
+</script>
+</body>
+</html>

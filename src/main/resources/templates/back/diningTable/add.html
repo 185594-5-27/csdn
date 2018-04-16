@@ -1,0 +1,87 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<form id="diningTableForm"  role="form" method="post" action="diningTable/save">
+	<div class="form-group" >
+		<label for="name">桌名:</label>
+		<input type="text" class="form-control" name="name" id="name"  placeholder="请输入桌名" />
+	</div>
+	<div class="form-group" >
+		<label for="image">图片地址:</label>
+		<input type="text" class="form-control" name="image" id="image"  placeholder="请输入图片地址" />
+	</div>
+	<div class="form-group">
+		<label for="state">状态:</label>
+		<select class="form-control" name="state" id="state" >
+		</select>
+	</div>
+	<div class="form-group" >
+		<label for="diningDescribe">描述:</label>
+		<input type="text" class="form-control" name="diningDescribe" id="diningDescribe"  placeholder="请输入描述" />
+	</div>
+	<div class="form-group" >
+		<label for="note">备注:</label>
+		<input type="text" class="form-control" name="note" id="note"  placeholder="请输入备注" />
+	</div>
+</form>
+<script th:inline="javascript">
+	<![CDATA[
+	$(function () {
+
+        // 加载状态下拉框
+        getSelectOption("DINING_TABLE_STATE","state");
+
+		$('#diningTableForm').bootstrapValidator({
+			message: 'This value is not valid',
+			feedbackIcons: {
+				valid: 'glyphicon glyphicon-ok',
+				invalid: 'glyphicon glyphicon-remove',
+				validating: 'glyphicon glyphicon-refresh'
+			},
+			fields: {
+				name:{
+					message: '桌名验证失败',
+					validators: {
+					notEmpty: {
+						message: '桌名不能为空'
+					}
+				}
+			},
+				image:{
+					message: '图片地址验证失败',
+					validators: {
+					notEmpty: {
+						message: '图片地址不能为空'
+					}
+				}
+			},
+				diningDescribe:{
+					message: '描述验证失败',
+					validators: {
+					notEmpty: {
+						message: '描述不能为空'
+					}
+				}
+			}
+			}
+		})
+		$("#btnOk",window.top.document).click(function() {
+			var bootstrapValidator = $("#diningTableForm", window.top.document).data('bootstrapValidator');
+			bootstrapValidator.validate();
+			if(bootstrapValidator.isValid()){
+				$.post($("#diningTableForm",window.top.document).attr('action'),$("#diningTableForm",window.top.document).serialize(),function(e){
+					if(e.result){
+						$('.modal-dialog', window.top.document).parent('div').remove()
+						$('body', window.top.document).find('.modal-backdrop').remove();
+						$(window.parent.document).contents().find(".tab-pane.fade.active.in iframe")[0].contentWindow.doQuery();
+						window.Ewin.alert({message:'增加数据成功!'});
+					}else{
+						window.Ewin.alert({message:'增加数据失败!'});
+					}
+				 })
+			}
+		 });
+	})
+	]]>
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="include/includebase"></head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">查询条件</div>
+        <div class="panel-body">
+            <form class="form-inline" role="form" style="float: left; width: 100%;" method="post"
+                  id="querymobileUser">
+                <div class="form-group">
+                    <label for="name">名字:</label>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="请输入名字"/>
+                </div>
+                <div class="form-group">
+                    <label for="phone">手机:</label>
+                    <input type="text" class="form-control" name="phone" id="phone" placeholder="请输入电话"/>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="queryBtn" onclick="doQuery();" class="btn btn-primary">查询</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<table id="mobileUser-table" style="margin-top: -50px;">
+</table>
+</div>
+<script th:inline="javascript">
+    $(function () {
+        initTable();
+    });
+
+    // 用户积分明细
+    function userScoreDetail(id){
+        window.Ewin.dialogShow({title: "添加", url: "mobileUser/toUserScoreDetailList?id="+id, width:950,height:600})
+    }
+
+    function doQuery() {
+        $('#mobileUser-table').bootstrapTable('refresh');    //刷新表格
+    }
+    function initTable() {
+        $('#mobileUser-table').bootstrapTable({
+            url: "mobileUser/list",
+            height: $(window.parent.document).find("#wrapper").height() - 252,
+            width: $(window).width(),
+            showColumns: true,
+            formId: "querymobileUser",
+            pagination: true,
+            sortName: 'id',
+            sortOrder: 'desc',
+            clickToSelect: true,// 单击某一行的时候选中某一条记录
+            pageSize: 13,
+            toolbars: [
+                {
+                    text: '添加',
+                    iconCls: 'glyphicon glyphicon-plus',
+                    handler: function () {
+                        window.Ewin.dialog({title: "添加", url: "mobileUser/addPage", width: 400, height: 550})
+                    }
+                },
+                {
+                    text: '修改',
+                    iconCls: 'glyphicon glyphicon-pencil',
+                    handler: function () {
+                        var rows = $('#mobileUser-table').bootstrapTable('getSelections');
+                        if (rows.length == 0 || rows.length > 1) {
+                            window.Ewin.alert({message: '请选择一条需要修改的数据!'});
+                            return false;
+                        }
+                        window.Ewin.dialog({
+                            title: "修改",
+                            url: "mobileUser/updatePage?id=" + rows[0].id,
+                            width: 400,
+                            height: 500
+                        });
+                    }
+                },
+                {
+                    text: '删除',
+                    iconCls: 'glyphicon glyphicon-remove',
+                    handler: function () {
+                        var rows = $('#mobileUser-table').bootstrapTable('getSelections');
+                        if (rows.length == 0) {
+                            window.Ewin.alert({message: '请选择一条需要删除的数据!'});
+                            return false;
+                        }
+                        window.Ewin.confirm({title: '提示', message: '是否要删除您所选择的记录？', width: 500}).on(function (e) {
+                            if (e) {
+                                $.post("mobileUser/removeBath", {json: JSON.stringify(rows)}, function (e) {
+                                    if (e.result) {
+                                        window.Ewin.alert({message: e.msg});
+                                        doQuery();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            ],
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    field: '',
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index + 1;
+                    }
+                },
+                {
+                    field: 'name',
+                    title: '名字',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'phone',
+                    title: '手机',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'score',
+                    title: '积分',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'sex',
+                    title: '性别',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'age',
+                    title: '年龄',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'consumeTime',
+                    title: '最近消费时间',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value != null && value != "") {
+                            var dt = new Date(value).format('yyyy-MM-dd hh:mm:ss');
+                            return dt;
+                        } else {
+                            return "";
+                        }
+                    }
+                },
+                {
+                    field: 'consumeMoney',
+                    title: '最近消费金额',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'lastLoginTime',
+                    title: '最后登陆时间',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value != null && value != "") {
+                            var dt = new Date(value).format('yyyy-MM-dd hh:mm:ss');
+                            return dt;
+                        } else {
+                            return "";
+                        }
+                    }
+                }, {
+                    field: 'operations',
+                    title: '操作',
+                    align: 'center',
+                    valign: 'middle',
+                    formatter: function (value, row, index) {
+                        return '<a href="#" onclick="userScoreDetail(' + row.id + ')">积分明细</a>';
+                    }
+                }
+            ]
+        });
+    }
+</script>
+</body>
+</html>

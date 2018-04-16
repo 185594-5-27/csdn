@@ -1,0 +1,124 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/component.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <title>餐桌选择</title>
+</head>
+<body class="home">
+
+
+<!-- / Site Header -->
+<div class="site-header">
+
+
+    <!-- /  Logo -->
+    <div class="site-logo">
+        <a href="">
+            <img src="images/site-logo.png"/>
+        </a>
+    </div>
+
+
+    <!-- / 菜单 -->
+    <div class="site-menu">
+        <div class="icon"></div>
+        <div class="menu">
+            <ul>
+                <li><a href="index.html">Portfolio</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="portfolio-single.html">Portfolio Single</a></li>
+                <li><a href="blog.html">Blog / News</a></li>
+                <li><a href="blog-single.html">Blog Single</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="shortcodes.html">Shortcodes</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- / 描述-->
+    <h1>
+        请选择右侧的相应的桌号来进行点餐!
+    </h1>
+
+    <!-- / 展示 -->
+    <div class="site-footer">
+        <div class="site-social">
+            <ul>
+                <li><i class="pe-so-dribbble pe-lg pe-va"></i></li>
+                <li><i class="pe-so-facebook pe-lg pe-va"></i></li>
+                <li><i class="pe-so-twitter pe-lg pe-va"></i></li>
+            </ul>
+        </div>
+
+        <p>© 2017 create</p>
+        <p>author Linzf</p>
+    </div>
+    <!-- \ Site Footer -->
+
+</div>
+<!-- \ Site Header -->
+
+
+<!-- \ Site Main -->
+<div class="site-main">
+    <ul class="row grid cs-style-2" id="diningTableList">
+    </ul>
+</div>
+
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{js/bootstrap.min.js}"></script>
+<script th:src="@{/js/bootstrap/alert/alert.js}"></script>
+<script>
+
+
+    $(function () {
+
+        // 异步加载餐桌数据
+        $.post("/orderHome/loadDiningTable", function (e) {
+            var data = e.data;
+            for (var i = 0; i < data.length; i++) {
+                $("#diningTableList").append("<li class=\"col-md-2 post\"> <figure><input type=\"hidden\" value=\"" + data[i].id + "\" /><img src=\"" + data[i].image + "\" /><figcaption><h3>" + data[i].name + "</h3><span>" + data[i].diningDescribe + "</span></figcaption></figure></li>");
+            }
+
+            $(".row.grid.cs-style-2 li").bind('click', function () {
+                var diningTableId = $(this).find("input").val();
+                $.post("/diningTable/getDiningTable?id="+diningTableId,function(e){
+                    if(e.state=='2'){
+                        window.Ewin.alert({message:'餐桌使用中无法点餐!'});
+                    }else if(e.state=='3'){
+                        window.Ewin.alert({message:'餐桌维护中无法点餐!'});
+                    }else{
+                       window.location.href = "/orderHome/toOrderHome?id="+diningTableId;
+                    }
+                })
+            });
+
+            $.getScript("/js/dining/modernizr.custom.js");
+            $.getScript("/js/dining/toucheffects.js");
+
+        });
+
+
+        $(".icon").click(function () {
+            $(".menu").slideToggle(175);
+            $(this).toggleClass("opened");
+            if ($(window).width() <= 992) {
+                if ($(".icon").attr("class").indexOf("opened") != -1) {
+                    $(".site-header").css("height", "300px");
+                } else {
+                    $(".site-header").css("height", "70px");
+                }
+            }
+            if ($(window).width() > 992) {
+                $('.site-header h1').slideToggle(300);
+            }
+        });
+
+    })
+</script>
+</body>
+</html>

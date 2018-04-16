@@ -1,0 +1,121 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="include/includebase"></head>
+<body >
+<div class="panel-body" style="padding-bottom:0px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">查询条件</div>
+        <div class="panel-body">
+            <form class="form-inline" role="form" style="float: left; width: 100%;margin-left: 20px;" method="post" id="queryForm">
+                <div class="form-group">
+                    <label for="userName">名称:</label>
+                    <input type="text" class="form-control" name="userName" id="userName"  placeholder="请输入名称" />
+                </div>
+                <div class="form-group">
+                    <label >日期:</label>
+                    <div class="input-group date form_datetime col-md-5" >
+                        <input class="form-control "  type="text" name="start_date" value="" />
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                    </div>
+                    <label >到:</label>
+                    <div class="input-group date form_datetime col-md-5" >
+                        <input class="form-control "  type="text" name="end_date" value="" />
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="queryBtn" onclick="doQuery();" class="btn btn-primary">查询</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <table id="demo-table" style="margin-top: -50px;">
+    </table>
+</div>
+
+<script th:inline="javascript">
+    $(function() {
+        initTable();
+        initDate();
+    });
+
+    function doQuery(){
+        $('#demo-table').bootstrapTable('refresh');    //刷新表格
+    }
+
+    function initDate(){
+        $('.form_datetime').datetimepicker({
+            language:  'zh',
+            format : 'yyyy-mm-dd',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,//  【maxView:1 minView:0 组合出来的选择结果是时分秒】，【minView:2 表示选择的结果是年月日】，【不设置该参数则可以选到年月日 时分秒】
+            forceParse: 0,
+            showMeridian: 1
+        });
+    }
+
+    function initTable(){
+        $('#demo-table').bootstrapTable({
+            url:"login/loadData",
+            height: $(window).height() + 125,
+            width:$(window).width(),
+            showColumns:true,
+            formId :"queryForm",
+            toolbars:[
+                {
+                    text: '添加',
+                    iconCls: 'glyphicon glyphicon-plus',
+                    handler: function () {
+                        window.Ewin.dialog({title:"增加用户",url:"modal",gridId:"gridId",width:800,height:390})
+                    }
+                },
+                {
+                    text: '修改',
+                    iconCls: 'glyphicon glyphicon-pencil',
+                    handler: function () {
+                        var rows = $('#demo-table').bootstrapTable('getSelections');
+                        if(rows.length==0){
+                            window.Ewin.alert({message:'清选择一条需要修改的数据!'});
+                            return false;
+                        }
+                        alert(rows[0].id);
+                        window.Ewin.confirm({title:'提示',message:'是否要确定消息',width:500}).on(function (e) {if (!e) {return;}} );
+                    }
+                },
+                {
+                    text: '删除',
+                    iconCls: 'glyphicon glyphicon-pencil',
+                    handler: function () {
+                        window.Ewin.alert({message:'删除数据'});
+                    }
+                }
+            ],
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    field: '',
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+                },
+                {
+                    field : 'id',
+                    title : 'User ID',
+                    align : 'center',
+                    valign : 'middle',
+                    sortable : true
+                }]
+        });
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<html xmlns:th="http://www.thymeleaf.org"
+ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"> 
+<head th:include="include/includebase"></head> 
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+	<div class="panel panel-default">
+		<div class="panel-heading">消费信息</div>
+		<div class="panel-body" style="overflow-y:auto;height:550px;">
+			<table class="table" id="orderDetailTable" style="text-align:center; ">
+				<tr>
+					<td>序号</td>
+					<td>菜名</td>
+					<td>单价</td>
+					<td>优惠单价</td>
+					<td>数量</td>
+					<td>点菜类型</td>
+					<td>状态</td>
+					<td>总价</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+    $(function() {
+        $.post("/order/getOrderDetailByOrderId",{orderId:[[${entity.id}]]},function(e){
+            var data_info = e.data;
+            var total_pay = 0;
+            for(var i=0;i<data_info.length;i++){
+                var price = 0;
+                if(data_info[i].state=='1'&&data_info[i].type!='3'){
+                    if(data_info[i].isPreferential=='1'){
+                        price = data_info[i].num * data_info[i].preferentialPrice;
+                    }else{
+                        price = data_info[i].num * data_info[i].price;
+                    }
+				}
+                total_pay = total_pay + price;
+                $("#orderDetailTable").append("<tr><td>"+(i+1)+"</td><td>"+data_info[i].name+"</td><td>"+data_info[i].price+"</td><td>"+data_info[i].preferentialPrice+"</td><td>"+data_info[i].num+"</td><td>"+getCodeDictText("DINNER_TYPE",data_info[i].type)+"</td><td>"+getCodeDictText("ORDER_DETAIL_STATE",data_info[i].state)+"</td><td>"+price+"</td></tr>");
+			}
+			var state = [[${entity.state}]];
+			if(state=='1'){
+                $("#orderDetailTable").append("<tr><td></td><td></td><td></td><td></td><td></td><td style='color: red;'></td><td></td><td style='color: red;'>总计消费金额："+total_pay+"</td></tr>");
+			}else if(state=='2'){
+                $("#orderDetailTable").append("<tr><td></td><td></td><td></td><td></td><td></td><td style='color: red;'>总计消费金额："+total_pay+"</td><td style='color: red;'>实际消费金额："+[[${entity.realIncome}]]+"</td></tr>");
+                $("#orderDetailTable").append("<tr><td>结账备注：</td><td colspan='7' style='text-align: left;color: red;'>"+[[${entity.note}]]+"</td></tr>");
+			}else {
+                $("#orderDetailTable").append("<tr><td></td><td></td><td></td><td></td><td></td><td></td><td style='color: red;'></td><td style='color: red;'>总计消费金额："+total_pay+"</td></tr>");
+                $("#orderDetailTable").append("<tr><td>订单取消备注：</td><td colspan='7' style='text-align: left;color: red;'>"+[[${entity.note}]]+"</td></tr>");
+			}
+
+		})
+    })
+</script>
+</body>
+</html>

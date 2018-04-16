@@ -1,0 +1,82 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<form id="checkoutForm" role="form" method="post" action="order/checkout">
+    <input type="hidden" name="id" th:value="${entity.id}"/>
+    <input type="hidden" name="orderNum" th:value="${entity.orderNum}"/>
+    <input type="hidden" name="orderPrice" th:value="${entity.orderPrice}"/>
+    <div class="form-group">
+        <label>桌号:</label>
+        <label style="font-size: 18px;color: red;" th:text="${entity.tableNum}"></label>
+    </div>
+    <div class="form-group">
+        <label>包间名字:</label>
+        <label style="font-size: 18px;color: red;" th:text="${entity.privateRoom}"></label>
+    </div>
+    <div class="form-group">
+        <label>订单编号:</label>
+        <label style="font-size: 18px;color: red;" th:text="${entity.orderNum}"></label>
+    </div>
+    <div class="form-group">
+        <label>订单价格:</label>
+        <label style="font-size: 18px;color: red;" th:text="${entity.orderPrice}+'元'"></label>
+    </div>
+    <div class="form-group">
+        <label for="realIncome">实际收入:</label>
+        <input type="text" class="form-control" name="realIncome" id="realIncome" th:value="${entity.orderPrice}"
+               placeholder="请输入实际收入"/>
+    </div>
+    <div class="form-group">
+        <label for="consumeUser">消费人:</label>
+        <input type="text" class="form-control" name="consumeUser" id="consumeUser" placeholder="请输入消费人"/>
+    </div>
+    <div class="form-group">
+        <label for="consumeUser">消费人手机号:</label>
+        <input type="text" class="form-control" name="consumeUserPhone" id="consumeUserPhone" placeholder="请消费人手机号"/>
+    </div>
+    <div class="form-group">
+        <label for="score">产生积分:</label>
+        <input type="text" class="form-control" name="score" id="score" th:value="${entity.orderPrice}"
+               placeholder="请输入产生积分"/>
+    </div>
+</form>
+<script th:inline="javascript">
+    <![CDATA[
+    $(function () {
+        $('#checkoutForm').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                realIncome: {
+                    message: '实际收入验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '实际收入不能为空'
+                        }
+                    }
+                }
+            }
+        })
+        $("#btnOk", window.top.document).click(function () {
+            var bootstrapValidator = $("#checkoutForm", window.top.document).data('bootstrapValidator');
+            bootstrapValidator.validate();
+            if (bootstrapValidator.isValid()) {
+                $.post($("#checkoutForm", window.top.document).attr('action'), $("#checkoutForm", window.top.document).serialize(), function (e) {
+                    if (e.result) {
+                        $('.modal-dialog', window.top.document).parent('div').remove()
+                        $('body', window.top.document).find('.modal-backdrop').remove();
+                        $(window.parent.document).contents().find(".tab-pane.fade.active.in iframe")[0].contentWindow.doQuery();
+                        window.Ewin.alert({message: '结账成功!'});
+                    } else {
+                        window.Ewin.alert({message: '结账失败!'});
+                    }
+                })
+            }
+        });
+    })
+    ]]>
+</script>
+</body>

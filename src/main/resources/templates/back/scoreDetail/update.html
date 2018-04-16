@@ -1,0 +1,123 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<form id="scoreDetailForm"  role="form" method="post" action="scoreDetail/update">
+		<input type="hidden" name="id" id="id" th:value="${entity.id}" />
+	<div class="form-group" >
+		<label for="orderId">订单ID:</label>
+		<input type="text" class="form-control" name="orderId" id="orderId" th:value="${entity.orderId}" placeholder="请输入订单ID" />
+	</div>
+	<div class="form-group" >
+		<label for="userId">用户ID:</label>
+		<input type="text" class="form-control" name="userId" id="userId" th:value="${entity.userId}" placeholder="请输入用户ID" />
+	</div>
+	<div class="form-group" >
+		<label for="type">积分类型（1：增加积分；2：扣除积分；3：积分取消）:</label>
+		<input type="text" class="form-control" name="type" id="type" th:value="${entity.type}" placeholder="请输入积分类型（1：增加积分；2：扣除积分；3：积分取消）" />
+	</div>
+	<div class="form-group" >
+		<label for="createTime">创建时间:</label>
+		<input type="text" class="form-control" name="createTime" id="createTime" th:value="${entity.createTime}" placeholder="请输入创建时间" />
+	</div>
+	<div class="form-group" >
+		<label for="score">消耗积分:</label>
+		<input type="text" class="form-control" name="score" id="score" th:value="${entity.score}" placeholder="请输入消耗积分" />
+	</div>
+	<div class="form-group" >
+		<label for="orderNo">订单编号:</label>
+		<input type="text" class="form-control" name="orderNo" id="orderNo" th:value="${entity.orderNo}" placeholder="请输入订单编号" />
+	</div>
+	<div class="form-group" >
+		<label for="userName">用户姓名:</label>
+		<input type="text" class="form-control" name="userName" id="userName" th:value="${entity.userName}" placeholder="请输入用户姓名" />
+	</div>
+</form>
+<script th:inline="javascript">
+	<![CDATA[
+	$(function () {
+		$('#scoreDetailForm').bootstrapValidator({
+			message: 'This value is not valid',
+			feedbackIcons: {
+				valid: 'glyphicon glyphicon-ok',
+				invalid: 'glyphicon glyphicon-remove',
+				validating: 'glyphicon glyphicon-refresh'
+			},
+			fields: {
+				orderId:{
+					message: '订单ID验证失败',
+					validators: {
+					notEmpty: {
+						message: '订单ID不能为空'
+					}
+				}
+			},
+				userId:{
+					message: '用户ID验证失败',
+					validators: {
+					notEmpty: {
+						message: '用户ID不能为空'
+					}
+				}
+			},
+				type:{
+					message: '积分类型（1：增加积分；2：扣除积分；3：积分取消）验证失败',
+					validators: {
+					notEmpty: {
+						message: '积分类型（1：增加积分；2：扣除积分；3：积分取消）不能为空'
+					}
+				}
+			},
+				createTime:{
+					message: '创建时间验证失败',
+					validators: {
+					notEmpty: {
+						message: '创建时间不能为空'
+					}
+				}
+			},
+				score:{
+					message: '消耗积分验证失败',
+					validators: {
+					notEmpty: {
+						message: '消耗积分不能为空'
+					}
+				}
+			},
+				orderNo:{
+					message: '订单编号验证失败',
+					validators: {
+					notEmpty: {
+						message: '订单编号不能为空'
+					}
+				}
+			},
+				userName:{
+					message: '用户姓名验证失败',
+					validators: {
+					notEmpty: {
+						message: '用户姓名不能为空'
+					}
+				}
+			},
+			}
+		})
+		$("#btnOk",window.top.document).click(function() {
+			var bootstrapValidator = $("#scoreDetailForm", window.top.document).data('bootstrapValidator');
+			bootstrapValidator.validate();
+			if(bootstrapValidator.isValid()){
+				$.post($("#scoreDetailForm",window.top.document).attr('action'),$("#scoreDetailForm",window.top.document).serialize(),function(e){
+					if(e.result){
+						$('.modal-dialog', window.top.document).parent('div').remove()
+						$('body', window.top.document).find('.modal-backdrop').remove();
+						$(window.parent.document).contents().find(".tab-pane.fade.active.in iframe")[0].contentWindow.doQuery();
+						window.Ewin.alert({message:'更新数据成功!'});
+					}else{
+						window.Ewin.alert({message:'更新数据失败!'});
+					}
+				 })
+			}
+		 });
+	})
+	]]>
+</script>
+</body>
+</html>

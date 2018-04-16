@@ -1,0 +1,169 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="include/includebase"></head>
+<script th:src="@{/js/echarts/echarts.js}"></script>
+<body>
+   <div style="width: 90%;">
+       <div class="row" style="margin-top: 30px;">
+           <div class="col-sm-6 col-md-4">
+               <div class="thumbnail">
+                   <div class="caption" id="yesterday">
+                       <h3>昨日收入:0</h3>
+                   </div>
+               </div>
+           </div>
+           <div class="col-sm-6 col-md-4">
+               <div class="thumbnail">
+                   <div class="caption" id="present">
+                       <h3>今日收入:0</h3>
+                   </div>
+               </div>
+           </div>
+           <div class="col-sm-6 col-md-4">
+               <div class="thumbnail">
+                   <div class="caption" id="recently">
+                       <h3 >最近收入:0</h3>
+                   </div>
+               </div>
+           </div>
+       </div>
+       <div class="row">
+           <div class="col-md-12">
+               <div id="recently_income" style="height:300px;border:1px solid #ccc;padding:10px;width:100%;float: left;">
+
+               </div>
+           </div>
+       </div>
+       <div class="row" style="margin-top: 30px;">
+           <div class="col-sm-6 col-md-6">
+               <div id="income_composition" style="height:300px;border:1px solid #ccc;padding:10px;width:100%;float: left;">
+
+               </div>
+           </div>
+           <div class="col-sm-6 col-md-6">
+               <div class="thumbnail">
+                   <div class="caption">
+                       <h3>一号包间:空闲</h3>
+                       <h3>一号包间:空闲</h3>
+                       <h3>一号包间:空闲</h3>
+                       <h3>一号包间:空闲</h3>
+                       <h3>一号包间:空闲</h3>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+   <script th:inline="javascript">
+       $(function () {
+           initIncome();
+           recentlyIncome();
+           initIncomeComposition();
+       });
+
+       // 初始化收入信息
+       function initIncome(){
+          $.post("/order/getIncomeCollection",function(data){
+              $("#yesterday").html("<h3>昨日收入:"+data.yesterday+"</h3>");
+              $("#present").html("<h3>今日收入:"+data.present+"</h3>");
+              $("#recently").html("<h3>最近收入:"+data.recently+"</h3>");
+          })
+       }
+
+       // 初始化最近一个月的收入构成
+       function initIncomeComposition(){
+           $.post("/order/sumIncomeComposition",function(data){
+               var legend_data = "[";
+               var series_data = "[";
+               var subtext = data.startDate + "到" + data.endDate;
+               var data = data.incomeComposition;
+               for(var i=0;i<data.length;i++){
+                   if(i==0){
+                       legend_data = legend_data + "\""+data[i].note+"\"";
+                       series_data = series_data + "{\"value\":\""+ data[i].orderPrice+"\",\"name\":\""+data[i].note+"\"}";
+                   }else{
+                       legend_data = legend_data + ",\"" + data[i].note +"\"";
+                       series_data = series_data + ",{\"value\":\""+ data[i].orderPrice+"\",\"name\":\""+data[i].note+"\"}";
+                   }
+               }
+               legend_data = legend_data + "]";
+               series_data = series_data + "]";
+               incomeComposition(eval("("+legend_data+")"),eval("("+series_data+")"),subtext);
+           })
+       }
+
+       // 最近一个月的收入构成
+       function incomeComposition(legend_data,series_data,subtext) {
+           var income_composition = echarts.init(document.getElementById('income_composition'));
+           option = {
+               title : {
+                   text: '收入构成',
+                   subtext: subtext,
+                   x:'center'
+               },
+               tooltip : {
+                   trigger: 'item',
+                   formatter: "{a} <br/>{b} : {c} ({d}%)"
+               },
+               legend: {
+                   orient: 'vertical',
+                   left: 'left',
+                   data:legend_data
+               },
+               series : [
+                   {
+                       name: '收入来源',
+                       type: 'pie',
+                       radius : '55%',
+                       center: ['50%', '60%'],
+                       data:series_data,
+                       itemStyle: {
+                           emphasis: {
+                               shadowBlur: 10,
+                               shadowOffsetX: 0,
+                               shadowColor: 'rgba(0, 0, 0, 0.5)'
+                           }
+                       }
+                   }
+               ]
+           };
+           income_composition.setOption(option);
+       }
+       // 加载最近一个月的收入
+       function recentlyIncome() {
+           var recently_income = echarts.init(document.getElementById('recently_income'));
+           var x_json = "['11-01','11-02','11-03','11-04','11-05','11-06','11-07','11-08','11-09','11-10','11-11','11-12','11-13','11-14','11-15','11-16','11-17','11-18','11-19','11-20','11-21','11-22','11-23','11-24','11-25','11-26','11-27','11-28','11-29','11-30']";
+           var x_json_value = "['100','200','300','100','200','300','100','200','300','100','200','300','100','200','300','100','200','300','100','200','300','100','200','300','100','200','300','100','200','300']";
+
+           var option1 = {
+               title: {
+                   text: ''
+               },
+               tooltip: {},
+               legend: {
+                   data:['近一个月收入']
+               },
+               xAxis: {
+                   data: eval("("+x_json+")")
+               },
+               yAxis: {
+
+               },
+               series: [{
+                   name: '近一个月收入',
+                   type: 'bar',
+                   data: eval("("+x_json_value+")"),
+                   itemStyle: {
+                       normal: {
+                           label: {
+                               show: true
+                           }
+                       }
+                   }
+               }]
+           };
+           // 使用刚指定的配置项和数据显示图表。
+           recently_income.setOption(option1);
+       }
+   </script>
+</body>
+</html>

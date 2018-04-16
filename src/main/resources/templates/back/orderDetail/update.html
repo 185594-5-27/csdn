@@ -1,0 +1,89 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<form id="orderDetailForm" role="form" method="post" action="orderDetail/update">
+    <input type="hidden" name="id" id="id" th:value="${entity.id}"/>
+    <input type="hidden" name="orderId"  th:value="${entity.orderId}"/>
+    <div class="form-group">
+        <label>菜品类型:</label>
+        <label style="font-size: 18px;color: red;" th:text="${entity.goodTypeName}"></label>
+    </div>
+    <div class="form-group">
+        <label>菜名:</label>
+        <label style="font-size: 18px;color: red;" th:text="${entity.name}"></label>
+    </div>
+    <div class="form-group">
+        <label>单价:</label>
+        <label style="font-size: 18px;color: red;" th:text="${entity.price}"></label>
+    </div>
+    <div class="form-group">
+        <label>优惠价格:</label>
+        <label style="font-size: 18px;color: red;" th:text="${entity.preferentialPrice}"></label>
+    </div>
+    <div class="form-group">
+        <label >是否优惠:</label>
+        <label style="font-size: 18px;color: red;" th:text="${entity.isPreferential eq '1'?'是':'否'}"></label>
+    </div>
+    <div class="form-group">
+        <label for="num">数量:</label>
+        <input type="text" class="form-control" name="num" id="num"  th:value="${entity.num}" placeholder="请输入数量" />
+    </div>
+    <div class="form-group">
+        <label for="num">状态:</label>
+        <select class="form-control" name="state" id="state" >
+        </select>
+    </div>
+</form>
+<script th:inline="javascript">
+    <![CDATA[
+    $(function () {
+        // 加载状态下拉框
+        getSelectOption("ORDER_DETAIL_STATE","state",[[${entity.state}]]);
+
+        $('#orderDetailForm').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                num: {
+                    message: '数量验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '数量不能为空'
+                        },
+                        regexp: {
+                            regexp: /^\+?[1-9][0-9]*$/,
+                            message: '价格必须为大于0的数字'
+                        },
+                        stringLength: {
+                            min: 1,
+                            max: 18,
+                            message: '价格必须在1到18位之间'
+                        }
+                    }
+                }
+            }
+        })
+        $("#btnOk", window.top.document).click(function () {
+            var bootstrapValidator = $("#orderDetailForm", window.top.document).data('bootstrapValidator');
+            bootstrapValidator.validate();
+            if (bootstrapValidator.isValid()) {
+                $.post($("#orderDetailForm", window.top.document).attr('action'), $("#orderDetailForm", window.top.document).serialize(), function (e) {
+                    if (e.result) {
+                        $('.modal-dialog', window.top.document).parent('div')[1].remove();
+                        //$('body', window.top.document).find('.modal-backdrop')[1].remove();
+                        $.find(".modal-body iframe")[0].contentWindow.doQuery();
+                        window.Ewin.alert({message: '更新数据成功!'});
+                    } else {
+                        window.Ewin.alert({message: '更新数据失败!'});
+                    }
+                })
+            }
+        });
+    })
+    ]]>
+</script>
+</body>
+</html>

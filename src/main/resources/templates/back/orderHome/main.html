@@ -1,0 +1,554 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>点菜主页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/buttons.css}" rel="stylesheet"/>
+    <link th:href="@{/css/flat.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.css}" rel="stylesheet"/>
+
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/bootstrap/alert/alert.js}"></script>
+    <script th:src="@{/js/bootstrap/date/date.prototype.format.js}"></script>
+</head>
+<body>
+<div class="viewer" style="font-size: 30px;color: red;">
+    <marquee th:text="'您当前正在为'+${entity.name}+'点菜中'"></marquee>
+</div>
+<div id="wrapper" class="viewer">
+    <div id="sidebar-wrapper">
+        <div class="well sidebar-nav">
+            <nav id="J_menuList" class="nav nav-list">
+            </nav>
+        </div>
+    </div>
+    <div id="page-content-wrapper" class="">
+        <div class="page-content">
+            <div class="container" id="J_list_Container">
+            </div>
+        </div>
+    </div>
+    <footer class="footFix footLeft">
+        <button id="myOrder" class="btn_change">
+            订单预览
+        </button>
+        <button id="homeBack" class="btn_change">
+            回到主页
+        </button>
+    </footer>
+</div>
+<div id="wrapper2" class="viewer wrapper countpage clearfix" style="display:none">
+    <section class="order_title">
+        <div class="container" id="">
+            <div class="col-md-12 clearfix foot_orderList">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <p class="notice">
+
+                        </p>
+                    </div>
+                    <div class="col-xs-6">
+                        <p class="notice tar">
+                            共计
+                            <span class="price" id="price_txt">
+                                315元
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="oder_content">
+        <div class="container" id="J_order_list">
+        </div>
+        <div class="container" id="J_pick_order_list">
+
+        </div>
+    </section>
+    <section class="oder_submit">
+        <div class="container">
+
+        </div>
+    </section>
+    <footer class="footFix footLeft">
+        <button class="btn_change" id="submitOrder">
+            下单
+        </button>
+        <button class="btn_change" id="orderBack">
+            回到主页
+        </button>
+    </footer>
+</div>
+<div id="imgViewer" class="viewer" style="display:none">
+    <div class="container">
+        <div class="col-md-12 clearfix">
+            <div class="col-xs-12 foot-info">
+                <div class="imgViewer_contain">
+                    <div class="img_contain">
+                        <img src="" class="img-responsive" alt="Responsive image"/>
+                    </div>
+                    <div id="J_imgInfo" class="info_contain clearfix">
+                        <strong>
+                            芒果布丁2
+                        </strong>
+                        <span class="colred">
+                            888元/粒
+                        </span>
+                        <small>
+                            524人买过
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="submitView" class="viewer clearfix" style="display:none">
+    <section class="submit_title">
+        <div class="container" id="orderContainer">
+
+            <div class="col-md-12 clearfix">
+                <div class="now_submit clearfix">
+                    <form role="form">
+
+                        <div class="line-body clearfix" id="form_more">
+                            <span class="fl lh43">
+                               配送信息
+                            </span>
+                            <ul class="nav nav-pills tabdrop fr">
+                                <li class="dropdown pull-right tabdrop">
+                                    <a class="dropdown-toggle" id="J_btn_reg">
+                                        <i class="fa fa-th-list">
+                                        </i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="form-group" id="form_info">
+                            <label for="phone">
+                                手机号码
+                            </label>
+                            <span class="twitter-typeahead">
+                                <input type="text" name="phone" id="phone" class="form-control tt-query"
+                                       autocomplete="off"
+                                       spellcheck="false" dir="auto">
+                            </span>
+                            <label for="name" class="mgt10">
+                                姓名
+                            </label>
+                            <span class="twitter-typeahead">
+                                <input type="text" name="name" id="name" class="form-control tt-query"
+                                       autocomplete="off"
+                                       spellcheck="false" dir="auto">
+                            </span>
+                            <label for="adress" class="mgt10">
+                                地址
+                            </label>
+                            <span class="twitter-typeahead">
+                                <input type="text" name="adress" id="adress" class="form-control tt-query"
+                                       autocomplete="off"
+                                       spellcheck="false" dir="auto">
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <div class="btn_control fr">
+                                <a class="btn btn-default bottommargin" id="cancelSubmit">
+                                    取消
+                                </a>
+                                <button formaction="order.html" class="btn btn-info bottommargin" id="stickyGrowl">
+                                    确认
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div id="loadingView" class="viewer">
+    <div class="container">
+        <div class="col-md-12 clearfix loading">
+        </div>
+    </div>
+</div>
+<!-- 加菜成功的模态框 -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">提示</h4>
+            </div>
+            <div class="modal-body">
+                <p>加菜成功</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">确&nbsp;定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+
+    var pickOrderMoney = 0;
+
+    var orderId = 0;
+
+    var iG = iG || {};
+    /**
+     if(window.localStorage){
+        try{
+            iG = JSON.parse(localStorage["zaiG"])||{};
+        }catch(e){
+            localStorage.removeItem("zaiG");
+            iG = iG||{};
+        }
+    }else{
+        iG = iG||{};
+    }
+     */
+    $(function () {
+        setTimeout(function () {
+            window.scrollTo(0, 1);
+        }, 0);
+
+        $("body").on("click", "#homeBack", function () {
+            window.document.location = "/diningTable";
+        });
+
+        $("body").on("click", "#orderBack", function () {
+            window.document.location = "/diningTable";
+        });
+
+        // 异步加载菜单数据
+        $.post("/orderHome/loadDiner", function (e) {
+            iG.items = eval("(" + e.data + ")");
+            init();
+        })
+
+
+        $("body").on("click", ".list_id_respone", function () {
+            iG["order"] = iG["order"] || {};
+            var index = $(this).attr("data_id");
+            if (iG.order[index]) {
+                iG.order[index].counter = iG.order[index].counter + 1;
+            } else {
+                var obj = getIndex(index);
+                iG.order[index] = obj;
+                iG.order[index].counter = 1;
+            }
+            if (window.localStorage) {
+                localStorage["zaiG"] = JSON.stringify(iG);
+            }
+        });
+
+        $("#myOrder").click(function () {
+            $(".wrapper,#wrapper").removeClass("show");
+            $(".wrapper,#wrapper").removeClass("hide");
+            $("#wrapper").addClass("hide");
+            $("#wrapper2").addClass("show")
+            pickOrderMoney = 0;
+            $.post("/orderHome/getOrderByDiningTable", {id: [[${entity.id}]]}, function (e) {
+                if (e.result) {
+                    $("#J_pick_order_list").html(buildPickOrder(e.data));
+                    for (var i in e.data) {
+                        if (e.data[i].isPreferential == '1') {
+                            pickOrderMoney = pickOrderMoney + e.data[i].preferentialPrice * e.data[i].num;
+                        } else {
+                            pickOrderMoney = pickOrderMoney + e.data[i].price * e.data[i].num;
+                        }
+                        orderId = e.data[i].orderId;
+                    }
+                }
+                $("#J_order_list").html(buildOrder(iG.order));
+                $("#price_txt").html(countPrice() + "元");
+            });
+        });
+        $("body").on("click", "#addOrder", function () {
+            $(".wrapper,#wrapper").removeClass("show");
+            $(".wrapper,#wrapper").removeClass("hide");
+            $("#wrapper").addClass("show");
+            $("#wrapper2").addClass("hide");
+        });
+        $("body").on("click", ".foot-img img", function () {
+            $("#imgViewer img").attr("src", $(this).attr("src"));
+
+            $("#imgViewer").show();
+            var item = getIndex($(this).attr("data_id"));
+            $("#J_imgInfo").html("<strong>" + item.name + "</strong><span class=\"colred\">" + item.price + "元/份</span><small>" + item.sels + "人买过</small>");
+            var img = new Image();
+            img.src = $(this).attr("src");
+            if (img.complete) {
+                $(".imgViewer_contain").css("max-width", img.width + "px")
+                $("#imgViewer .imgViewer_contain").css("margin-top", $(window).height() / 2 - img.height / 2 + "px");
+                img = null;
+            } else {
+                img.onload = function () {
+                    $(".imgViewer_contain").css("max-width", this.width + "px");
+                    $("#imgViewer .imgViewer_contain").css("margin-top", $(window).height() / 2 - img.height / 2 + "px");
+                    img = null;
+                };
+            }
+        });
+        $("body").on("click", "#imgViewer", function () {
+            $("#imgViewer").hide();
+        });
+
+        $("body").on("click", ".counter_plus", function () {
+            iG["order"] = iG["order"] || {};
+            var index = $(this).attr("data_id");
+
+            if (iG.order[index]) {
+                iG.order[index].counter = iG.order[index].counter + 1;
+            } else {
+                var obj = getIndex(index);
+                iG.order[index] = obj;
+                iG.order[index].counter = 1;
+            }
+            $(this).siblings(".nocounter").html(iG.order[index].counter);
+            $("#price_txt").html(countPrice() + "元");
+            if (window.localStorage) {
+                localStorage["zaiG"] = JSON.stringify(iG);
+            }
+        });
+
+        $("body").on("click", ".counter_minus", function () {
+            iG["order"] = iG["order"] || {};
+            var index = $(this).attr("data_id");
+            if (iG.order[index].counter === 0)return;
+            if (iG.order[index]) {
+                iG.order[index].counter = iG.order[index].counter - 1;
+            } else {
+                var obj = getIndex(index);
+                iG.order[index] = obj;
+                iG.order[index].counter = 1;
+            }
+            $(this).siblings(".nocounter").html(iG.order[index].counter);
+            $("#price_txt").html(countPrice() + "元");
+            if (window.localStorage) {
+                localStorage["zaiG"] = JSON.stringify(iG);
+            }
+        });
+
+        $("body").on("click", "#clearOder", function () {
+            iG["order"] = {};
+            $("#J_order_list").html(buildOrder(iG.order));
+            $("#price_txt").html(countPrice() + "元");
+            if (window.localStorage) {
+                localStorage["zaiG"] = JSON.stringify(iG);
+            }
+        });
+
+        $("body").on("click", "#J_menuList dd a", function () {
+            iG.indexMenu = $(this).attr("data_name");
+            $("#J_list_Container").html(listManger(iG.items));
+            $("#J_menuList .active").removeClass("active");
+            $(this).parent("dd").addClass("active");
+        });
+        $("#remote_order").click(function () {
+            $(".nav-tabs li.active").removeClass("active");
+            $(this).parent("li").addClass("active");
+            $("#form_desk").slideUp();
+            $("#form_more").slideUp();
+            $("#form_info").slideDown();
+        });
+        $("#now_order").click(function () {
+            $(".nav-tabs li.active").removeClass("active");
+            $(this).parent("li").addClass("active");
+            $("#form_desk").slideDown();
+            $("#form_more").slideDown();
+            $("#form_info").slideUp();
+        });
+        $("#J_btn_reg").click(function () {
+            $("#form_info").toggle("normal", "linear");
+
+        });
+        // 提交订单
+        $("#submitOrder").click(function () {
+            window.Ewin.confirm({title: '提示', message: '是否提交当前订单信息？', width: 500}).on(function (e1) {
+                if (e1) {
+                    var pick = false;
+                    var orderDetail = "[";
+                    for (var i in iG.order) {
+                        if (pick == false) {
+                            orderDetail = orderDetail + "{id:" + iG.order[i].id + ",num:" + iG.order[i].counter + "}"
+                        } else {
+                            orderDetail = orderDetail + ",{id:" + iG.order[i].id + ",num:" + iG.order[i].counter + "}";
+                        }
+                        pick = true;
+                    }
+                    orderDetail = orderDetail + "]";
+                    if (!pick) {
+                        window.Ewin.alert({message: '您还没有点菜，请先点菜以后再提交订单!'});
+                        return false;
+                    }
+                    // 提交订单数据
+                    $.post("/orderHome/submitOrder", {
+                        id: [[${entity.id}]],
+                        orderId: orderId,
+                        orderDetail: orderDetail
+                    }, function (e) {
+                        if (e.result == true) {
+                            window.Ewin.confirm({
+                                title: '提示',
+                                message: '订单提交成功!继续加菜选择确定，跳转到主页选择取消！',
+                                width: 500
+                            }).on(function (result) {
+                                if (result) {
+                                    window.document.location.reload();
+                                } else {
+                                    window.document.location = "/diningTable";
+                                }
+                            });
+                        }
+                    })
+                }
+            });
+        })
+        $("#cancelSubmit").click(function () {
+            $(".viewer:visible").removeClass("show").addClass("hide");
+            $("#wrapper2").removeClass("hide").addClass("show");
+        });
+    });
+    function init() {
+        setMenu(iG.items);
+        $("#J_list_Container").html(listManger(iG.items));
+        $("#loadingView").addClass("hide");
+    }
+
+    function setMenu(_list) {
+        iG.menu = [];
+        iG.indexMenu = (function () {
+            var menu;
+            var count = 0;
+            for (var i in _list) {
+                if (count === 0) {
+                    menu = i;
+                }
+                count++;
+                iG.menu.push(i);
+            }
+            return menu;
+        })();
+        buildMenu(iG.menu);
+    }
+
+    function buildMenu(_list) {
+        var menuHtml = "<dl>";
+        var active;
+        for (var i in _list) {
+            active = "";
+            if (_list[i] === iG.indexMenu) active = "active";
+            menuHtml += "<dd class=\"" + active + "\"><a data_name=\"" + _list[i] + "\">" + _list[i] + "</a></dd>"
+
+        }
+        menuHtml += "</dl>";
+        $("#J_menuList").html(menuHtml);
+    }
+
+    function getIndex(_id) {
+        var indexList = iG.items[iG.indexMenu];
+        for (var i in indexList) {
+            if (indexList[i].id == _id) {
+                return indexList[i]
+            }
+        }
+    }
+    function submit() {
+        var data = iG.order;
+        var result = [];
+        for (var i in data) {
+            result.push({id: iG.order[i].id, counter: iG.order[i].counter});
+        }
+        return JSON.stringify(result);
+    }
+
+    function countPrice() {
+        var price = 0;
+        for (var i in iG.order) {
+            if (iG.order[i].isPreferential == '1') {
+                price += Number(iG.order[i].preferentialPrice) * iG.order[i].counter;
+            } else {
+                price += Number(iG.order[i].price) * iG.order[i].counter;
+            }
+        }
+        return price + pickOrderMoney;
+    }
+    function listManger(_list) {
+        var result = "";
+        var listArr = [];
+        var indexList = _list[iG.indexMenu];
+        for (var i in indexList) {
+            listArr.push(indexList[i]);
+            if (Math.floor(i / 3) === 0 && i > 2) {
+                result += "<div class=\"row\">";
+                result += buildList(listArr);
+                result += "</div>";
+                listArr = [];
+            }
+        }
+        result += "<div class=\"row\">";
+        result += buildList(listArr);
+        result += "</div>";
+        return result;
+    }
+    function buildList(_list) {
+        var result = "";
+        for (var i in _list) {
+            result += "<div class=\"col-md-4 clearfix foot-items\"><div class=\"col-xs-4 foot-img\"><img src=\"" + _list[i].imageUrl + "\" class=\"img-responsive\" alt=\"Responsive image\" data_id=\"" + _list[i].id + "\" ></div><div class=\"col-xs-6 foot-info\"><p><strong>" + _list[i].name + "</strong></p><p class=\"colred\">" + _list[i].price + "元/份</p><p><small>" + _list[i].sels + "人买过</small></p></div><div class=\"col-xs-2 icons-pick foot-pick\"><div class=\"btn_wrap\"><button class=\"minus\" style=\"display: none;\"><strong></strong></button><i style=\"display: none;\">0</i><button class=\"list_add list_id_respone\" data_id=\"" + _list[i].id + "\"  data-toggle=\"modal\" data-target=\"#myModal\"><strong></strong></button><em class=\"fixBig  fake\"></em></div></div></div>"
+            //<button ontouchstart=\"\" class=\"list_id_respone button button-circle button-flat-primary fa fa-plus\" data_id=\""+_list[i].id+"\"></button>
+        }
+        return result;
+    }
+    function buildOrder(_list) {
+        var result = "<div class=\"row\" id=\"J_order_Manager\"><div class=\"col-xs-12 clearfix board_content\"><div class=\"col-xs-4 title_contain\"><p class=\"menu_title \">订单预览</p></div><div class=\"col-xs-2\"></div><div class=\"col-xs-3 title_contain\"><button class=\"button button-rounded button-flat-action\" id=\"addOrder\">选菜</button></div><div class=\"col-xs-3 title_contain\"><button id=\"clearOder\"class=\"button button-rounded button-flat\">清空</button></div></div></div>";
+        var check = true;
+
+        for (var i in _list) {
+            if (_list[i].counter === 0)continue;
+            check = false;
+            if (_list[i].isPreferential == '1') {
+                result += "<div class=\"row gray_line\"><div class=\"col-md-12 clearfix board_content\"><div class=\"col-xs-6\"><div class=\"col-md-6 clearfix order_item_name\"><label>" + _list[i].name + "</label></div><div class=\"col-md-6 clearfix order_price\">" + _list[i].preferentialPrice + "元一例</div></div><div class=\"col-xs-6\"><div class=\"btn_wrap counter\"><button class=\"list_minus counter_minus fl\" style=\"display: inline-block;\" data_id=\"" + _list[i].id + "\" ontouchstart=\"\"><strong></strong></button><i class=\"nocounter fl\" style=\"display: inline-block;\">" + _list[i].counter + "</i><button class=\"list_add counter_plus\" data_id=\"" + _list[i].id + "\" ontouchstart=\"\"><strong></strong></button><em class=\"fixBig  fake\"></em></div></div></div></div>";
+            } else {
+                result += "<div class=\"row gray_line\"><div class=\"col-md-12 clearfix board_content\"><div class=\"col-xs-6\"><div class=\"col-md-6 clearfix order_item_name\"><label>" + _list[i].name + "</label></div><div class=\"col-md-6 clearfix order_price\">" + _list[i].price + "元一例</div></div><div class=\"col-xs-6\"><div class=\"btn_wrap counter\"><button class=\"list_minus counter_minus fl\" style=\"display: inline-block;\" data_id=\"" + _list[i].id + "\" ontouchstart=\"\"><strong></strong></button><i class=\"nocounter fl\" style=\"display: inline-block;\">" + _list[i].counter + "</i><button class=\"list_add counter_plus\" data_id=\"" + _list[i].id + "\" ontouchstart=\"\"><strong></strong></button><em class=\"fixBig  fake\"></em></div></div></div></div>";
+            }
+        }
+        if (check) {
+            result += "<div class=\"row gray_line\"><div class=\"col-md-12 clearfix board_content\"><p style=\"text-align: center;\"><span>亲，还没选到心仪的菜喔，点加菜开始选菜吧！</span></p></div></div>";
+        }
+        return result;
+    }
+
+    // 加载已经点好的餐的数据
+    function buildPickOrder(data) {
+        var result = "<div class=\"row\" id=\"J_order_Manager\"><div class=\"col-xs-12 clearfix board_content\"><div class=\"col-xs-4 title_contain\"><p class=\"menu_title \">已点菜单</p></div><div class=\"col-xs-2\"></div></div></div>";
+        var check = false;
+        var addDishText = "";
+        var addDishTime = "";
+        for (var i in data) {
+            if (data[i].type == '2') {
+                addDishText = "【加菜】";
+            } else {
+                addDishText = "";
+            }
+            addDishTime = "【" + new Date(data[i].orderTime).format('yyyy-MM-dd hh:mm:ss') + "】";
+            if (data[i].isPreferential == '1') {
+                result += "<div class=\"row gray_line\"><div class=\"col-md-12 clearfix board_content\"><div class=\"col-xs-6\"><div class=\"col-md-6 clearfix order_item_name\"><label>" + data[i].name + "</label></div><div class=\"col-md-8 clearfix order_price\">" + data[i].preferentialPrice + "元一例" + addDishText + "&nbsp;" + addDishTime + "</div></div><div class=\"col-xs-4\"><div class=\"btn_wrap counter\"><i class=\"nocounter fl\" style=\"display: inline-block;\">" + data[i].num + "</i></div></div></div></div>";
+            } else {
+                result += "<div class=\"row gray_line\"><div class=\"col-md-12 clearfix board_content\"><div class=\"col-xs-6\"><div class=\"col-md-6 clearfix order_item_name\"><label>" + data[i].name + "</label></div><div class=\"col-md-6 clearfix order_price\">" + data[i].price + "元一例" + addDishText + "&nbsp;" + addDishTime + "</div></div><div class=\"col-xs-6\"><div class=\"btn_wrap counter\"><i class=\"nocounter fl\" style=\"display: inline-block;\">" + data[i].num + "</i></div></div></div></div>";
+            }
+            check = true;
+        }
+        if (!check) {
+            return "";
+        }
+        return result;
+    }
+</script>
+</body>
+</html>

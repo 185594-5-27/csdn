@@ -1,0 +1,206 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+<form id="orderForm"  role="form" method="post" action="order/update">
+	<div class="form-group" >
+		<label for="id">订单流水ID:</label>
+		<input type="text" class="form-control" name="id" id="id" th:value="${entity.id}" placeholder="请输入订单流水ID" />
+	</div>
+	<div class="form-group" >
+		<label for="orderNum">订单编号:</label>
+		<input type="text" class="form-control" name="orderNum" id="orderNum" th:value="${entity.orderNum}" placeholder="请输入订单编号" />
+	</div>
+	<div class="form-group" >
+		<label for="orderPrice">订单价格:</label>
+		<input type="text" class="form-control" name="orderPrice" id="orderPrice" th:value="${entity.orderPrice}" placeholder="请输入订单价格" />
+	</div>
+	<div class="form-group" >
+		<label for="realIncome">实际收入:</label>
+		<input type="text" class="form-control" name="realIncome" id="realIncome" th:value="${entity.realIncome}" placeholder="请输入实际收入" />
+	</div>
+	<div class="form-group" >
+		<label for="tableNum">桌号:</label>
+		<input type="text" class="form-control" name="tableNum" id="tableNum" th:value="${entity.tableNum}" placeholder="请输入桌号" />
+	</div>
+	<div class="form-group" >
+		<label for="privateRoom">包间名字:</label>
+		<input type="text" class="form-control" name="privateRoom" id="privateRoom" th:value="${entity.privateRoom}" placeholder="请输入包间名字" />
+	</div>
+	<div class="form-group" >
+		<label for="orderTime">下单时间:</label>
+		<input type="text" class="form-control" name="orderTime" id="orderTime" th:value="${entity.orderTime}" placeholder="请输入下单时间" />
+	</div>
+	<div class="form-group" >
+		<label for="state">订单状态（1：待付款；2：已付款；3：订单取消）:</label>
+		<input type="text" class="form-control" name="state" id="state" th:value="${entity.state}" placeholder="请输入订单状态（1：待付款；2：已付款；3：订单取消）" />
+	</div>
+	<div class="form-group" >
+		<label for="orderUser">下单人:</label>
+		<input type="text" class="form-control" name="orderUser" id="orderUser" th:value="${entity.orderUser}" placeholder="请输入下单人" />
+	</div>
+	<div class="form-group" >
+		<label for="orderUserId">下单人ID:</label>
+		<input type="text" class="form-control" name="orderUserId" id="orderUserId" th:value="${entity.orderUserId}" placeholder="请输入下单人ID" />
+	</div>
+	<div class="form-group" >
+		<label for="consumeUser">消费人:</label>
+		<input type="text" class="form-control" name="consumeUser" id="consumeUser" th:value="${entity.consumeUser}" placeholder="请输入消费人" />
+	</div>
+	<div class="form-group" >
+		<label for="consumeUserId">消费人ID:</label>
+		<input type="text" class="form-control" name="consumeUserId" id="consumeUserId" th:value="${entity.consumeUserId}" placeholder="请输入消费人ID" />
+	</div>
+	<div class="form-group" >
+		<label for="consumeTime">消费时间:</label>
+		<input type="text" class="form-control" name="consumeTime" id="consumeTime" th:value="${entity.consumeTime}" placeholder="请输入消费时间" />
+	</div>
+	<div class="form-group" >
+		<label for="score">产品积分:</label>
+		<input type="text" class="form-control" name="score" id="score" th:value="${entity.score}" placeholder="请输入产品积分" />
+	</div>
+</form>
+<script th:inline="javascript">
+	<![CDATA[
+	$(function () {
+		$('#orderForm').bootstrapValidator({
+			message: 'This value is not valid',
+			feedbackIcons: {
+				valid: 'glyphicon glyphicon-ok',
+				invalid: 'glyphicon glyphicon-remove',
+				validating: 'glyphicon glyphicon-refresh'
+			},
+			fields: {
+				id:{
+					message: '订单流水ID验证失败',
+					validators: {
+					notEmpty: {
+						message: '订单流水ID不能为空'
+					}
+				}
+			},
+				orderNum:{
+					message: '订单编号验证失败',
+					validators: {
+					notEmpty: {
+						message: '订单编号不能为空'
+					}
+				}
+			},
+				orderPrice:{
+					message: '订单价格验证失败',
+					validators: {
+					notEmpty: {
+						message: '订单价格不能为空'
+					}
+				}
+			},
+				realIncome:{
+					message: '实际收入验证失败',
+					validators: {
+					notEmpty: {
+						message: '实际收入不能为空'
+					}
+				}
+			},
+				tableNum:{
+					message: '桌号验证失败',
+					validators: {
+					notEmpty: {
+						message: '桌号不能为空'
+					}
+				}
+			},
+				privateRoom:{
+					message: '包间名字验证失败',
+					validators: {
+					notEmpty: {
+						message: '包间名字不能为空'
+					}
+				}
+			},
+				orderTime:{
+					message: '下单时间验证失败',
+					validators: {
+					notEmpty: {
+						message: '下单时间不能为空'
+					}
+				}
+			},
+				state:{
+					message: '订单状态（1：待付款；2：已付款；3：订单取消）验证失败',
+					validators: {
+					notEmpty: {
+						message: '订单状态（1：待付款；2：已付款；3：订单取消）不能为空'
+					}
+				}
+			},
+				orderUser:{
+					message: '下单人验证失败',
+					validators: {
+					notEmpty: {
+						message: '下单人不能为空'
+					}
+				}
+			},
+				orderUserId:{
+					message: '下单人ID验证失败',
+					validators: {
+					notEmpty: {
+						message: '下单人ID不能为空'
+					}
+				}
+			},
+				consumeUser:{
+					message: '消费人验证失败',
+					validators: {
+					notEmpty: {
+						message: '消费人不能为空'
+					}
+				}
+			},
+				consumeUserId:{
+					message: '消费人ID验证失败',
+					validators: {
+					notEmpty: {
+						message: '消费人ID不能为空'
+					}
+				}
+			},
+				consumeTime:{
+					message: '消费时间验证失败',
+					validators: {
+					notEmpty: {
+						message: '消费时间不能为空'
+					}
+				}
+			},
+				score:{
+					message: '产品积分验证失败',
+					validators: {
+					notEmpty: {
+						message: '产品积分不能为空'
+					}
+				}
+			},
+			}
+		})
+		$("#btnOk",window.top.document).click(function() {
+			var bootstrapValidator = $("#orderForm", window.top.document).data('bootstrapValidator');
+			bootstrapValidator.validate();
+			if(bootstrapValidator.isValid()){
+				$.post($("#orderForm",window.top.document).attr('action'),$("#orderForm",window.top.document).serialize(),function(e){
+					if(e.result){
+						$('.modal-dialog', window.top.document).parent('div').remove()
+						$('body', window.top.document).find('.modal-backdrop').remove();
+						$(window.parent.document).contents().find(".tab-pane.fade.active.in iframe")[0].contentWindow.doQuery();
+						window.Ewin.alert({message:'更新数据成功!'});
+					}else{
+						window.Ewin.alert({message:'更新数据失败!'});
+					}
+				 })
+			}
+		 });
+	})
+	]]>
+</script>
+</body>
+</html>

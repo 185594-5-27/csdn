@@ -1,6 +1,7 @@
 package com.mongo.common.config.security;
 
 
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -9,13 +10,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class CustomPasswordEncoder implements PasswordEncoder {
     @Override
     public String encode(CharSequence rawPassword) {
-        Md5PasswordEncoder encoder = new Md5PasswordEncoder();
-        return encoder.encodePassword(rawPassword.toString(), "hyll");
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return passwordEncoder.encode(rawPassword.toString());
     }
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        Md5PasswordEncoder encoder = new Md5PasswordEncoder();
-        return encoder.isPasswordValid(encodedPassword, rawPassword.toString(), "hyll");
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return passwordEncoder.matches(rawPassword.toString(),encodedPassword);
     }
 
 }

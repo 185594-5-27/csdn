@@ -1,0 +1,127 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="include/includebase"></head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+    <table id="orderDetail-table" style="margin-top: -50px;">
+    </table>
+</div>
+<script th:inline="javascript">
+    $(function () {
+        initTable();
+    });
+    function doQuery() {
+        $('#orderDetail-table').bootstrapTable('refresh');    //刷新表格
+    }
+
+    function orderDetailManager(id){
+        window.Ewin.dialog({title:"修改明细",url:"/orderDetail/updatePage?id="+id,width:400,height:600});
+    }
+
+    function initTable() {
+        $('#orderDetail-table').bootstrapTable({
+            url: "/orderDetail/list?orderId="+[[${entity.id}]],
+            height: $(window.parent.document).find("#wrapper").height() - 452,
+            width: $(window).width(),
+            showColumns: true,
+            formId: "queryorderDetail",
+            pagination: true,
+            sortName: 'id',
+            sortOrder: 'desc',
+            clickToSelect: true,// 单击某一行的时候选中某一条记录
+            pageSize: 5,
+            toolbars: [],
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    field: '',
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index + 1;
+                    }
+                },
+                {
+                    field: 'price',
+                    title: '单价',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'num',
+                    title: '数量',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'goodTypeName',
+                    title: '菜品类型',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'name',
+                    title: '菜名',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'preferentialPrice',
+                    title: '优惠价格',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                },
+                {
+                    field: 'isPreferential',
+                    title: '是否优惠',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value == '1') {
+                            return "有优惠";
+                        } else {
+                            return "无优惠";
+                        }
+                    }
+                },{
+                    field: 'state',
+                    title: '明细状态',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return getCodeDictText("ORDER_DETAIL_STATE",value);
+                    }
+                },
+                {
+                    field: 'orderTime',
+                    title: '下单时间',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        var dt = new Date(value).format('yyyy-MM-dd hh:mm:ss');
+                        return dt;
+                    }
+                },{
+                    field : 'operations',
+                    title : '操作',
+                    align : 'center',
+                    valign : 'middle',
+                    formatter: function (value, row, index) {
+                        return '<a href="#" onclick="orderDetailManager('+row.id+')">操作</a>';
+                    }
+                }
+            ]
+        });
+    }
+</script>
+</body>
+</html >
