@@ -1,0 +1,4 @@
+{"_id":{"$oid":"5ac09e21c053f41ba4f49b4a"},"_class":"com.mongodb.sys.entity.Dict","code":"OK","text":"允许","type":"DICT_IS_LOAD","value":"1","isLoad":"1"}
+{"_id":{"$oid":"5ac09e39c053f41ba4f49b4b"},"_class":"com.mongodb.sys.entity.Dict","code":"NOT","text":"不允许","type":"DICT_IS_LOAD","value":"0","isLoad":"1"}
+{"_id":{"$oid":"5ac09e78c053f41ba4f49b4c"},"_class":"com.mongodb.sys.entity.Dict","code":"USE","text":"启用","type":"USER_STATE","value":"1","isLoad":"1"}
+{"_id":{"$oid":"5ac09e87c053f41ba4f49b4d"},"_class":"com.mongodb.sys.entity.Dict","code":"UNUSE","text":"禁用","type":"USER_STATE","value":"0","isLoad":"1"}

@@ -41,20 +41,6 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         registry.addViewController("/groupList").setViewName("/sys/orggroup/groupList");
         registry.addViewController("/userList").setViewName("/sys/user/userList");
         registry.addViewController("/treeList").setViewName("/sys/tree/treeList");
-        // 跳转到点餐桌子主页
-        registry.addViewController("/diningTable").setViewName("/back/orderHome/diningTable");
-        // 菜品类型列表页
-        registry.addViewController("/foodTypeList").setViewName("/back/foodType/foodTypeList");
-        // 菜单列表页
-        registry.addViewController("/dinerList").setViewName("/back/diner/dinerList");
-        // 订单列表页
-        registry.addViewController("/orderList").setViewName("/back/order/orderList");
-        // 桌子列表页
-        registry.addViewController("/diningTableList").setViewName("/back/diningTable/diningTableList");
-        // 移动用户列表页
-        registry.addViewController("/mobileUser").setViewName("/back/mobileUser/mobileUserList");
-        // 积分明细列表页
-        registry.addViewController("/scoreDetailList").setViewName("/back/scoreDetail/scoreDetailList");
     }
 
 }

@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Date;
 
 /**
- * Created by Administrator on 2017/8/4 0004.
+ * Created by Administrator on 2018/04/17 0004.
  */
 public class CustomUserService implements UserDetailsService {
 

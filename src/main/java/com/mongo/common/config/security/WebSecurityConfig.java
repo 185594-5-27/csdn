@@ -17,16 +17,28 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /**
+     * 功能描述：实现自有的用户的登陆的验证
+     * @return
+     */
     @Bean
     UserDetailsService customUserService(){
         return new CustomUserService();
     }
 
+    /**
+     * 功能描述：实现密码的加密和验证
+     * @return
+     */
     @Bean
     PasswordEncoder passwordEncoder(){
         return new CustomPasswordEncoder();
     }
 
+    /**
+     * 功能描述：实现登陆成功以后页面的跳转
+     * @return
+     */
     @Bean
     LoginSuccessHandle loginSuccessHandle(){return new LoginSuccessHandle();}
 
