@@ -2,6 +2,7 @@ package com.mongo.sys.entity;
 
 
 import com.mongo.common.base.entity.QueryField;
+import com.mongo.sys.dao.UserRoleDao;
 import net.sf.json.JSONObject;
 import org.bson.types.ObjectId;
 import org.springframework.security.core.GrantedAuthority;
@@ -227,6 +228,25 @@ public class User implements UserDetails {
 
     public void setRoles(List<UserRole> roles) {
         this.roles = roles;
+    }
+
+    /**
+     * 功能描述：组装角色数据集合
+     * @param roleArray
+     * @param userRoleDao
+     */
+    public void packagingRoles(String roleArray,UserRoleDao userRoleDao){
+        List<UserRole> roles = new ArrayList<UserRole>();
+        if(roleArray!=null){
+            UserRole userRole = null;
+            for(String roleId:roleArray.split(",")){
+                if(!roleId.isEmpty()){
+                    userRole = new UserRole();
+                    roles.add(userRoleDao.get(roleId));
+                }
+            }
+        }
+        this.setRoles(roles);
     }
 
 }
