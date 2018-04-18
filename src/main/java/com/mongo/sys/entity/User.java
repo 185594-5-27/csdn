@@ -63,6 +63,17 @@ public class User implements UserDetails {
     // 角色信息集合
     private String roleArray;
 
+    // 组织架构数据集合
+    private OrgGroup orgGroup;
+
+    public OrgGroup getOrgGroup() {
+        return orgGroup;
+    }
+
+    public void setOrgGroup(OrgGroup orgGroup) {
+        this.orgGroup = orgGroup;
+    }
+
     public String getRoleArray() {
         return roleArray;
     }

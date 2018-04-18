@@ -196,7 +196,7 @@
                         window.Ewin.confirm({title:'提示',message:'是否要删除您所选择的记录？',width:500}).on(function (e) {
                             if (e) {
                                 $.post("user/removeBath",{json:JSON.stringify(rows)},function(e){
-                                    if(e.result){
+                                    if(e.success){
                                         window.Ewin.alert({message:e.msg});
                                         doQuery();
                                     }
